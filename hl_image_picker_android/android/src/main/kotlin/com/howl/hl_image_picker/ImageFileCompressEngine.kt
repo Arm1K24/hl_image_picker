@@ -12,7 +12,6 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 
-
 class ImageFileCompressEngine(
     private val quality: Double?,
     private val format: String?,
@@ -65,10 +64,10 @@ class ImageFileCompressEngine(
 
                     val file = File(imageDirectory, fileName)
 
-                    context.contentResolver.openOutputStream(Uri.fromFile(file)).use { os ->
+                    context.contentResolver.openOutputStream(Uri.fromFile(file))?.use { os ->
                         val compressQuality = ((quality ?: 0.9) * 100).toInt()
                         bitmap.compress(compressFormat, compressQuality, os)
-                    }
+                    } ?: call.onCallback(uri.toString(), null)
 
                     setOrientation(file, originalOrientation)
                     call.onCallback(uri.toString(), file.absolutePath)
