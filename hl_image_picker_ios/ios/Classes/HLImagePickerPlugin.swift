@@ -434,14 +434,14 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         //     cropViewController.aspectRatioLockDimensionSwapEnabled = true
         //     cropViewController.aspectRatioLockEnabled = true
         // }
-        if let aspectRatioPresets = arguments?["aspectRatioPresets"] as? [String] {
-            var allowedAspectRatios = [CropViewControllerAspectRatioPreset]()
-            for preset in aspectRatioPresets {
-                let aspectRatio = parseAspectRatio(name: preset)
-                allowedAspectRatios.append(aspectRatio)
-            }
-            cropViewController.allowedAspectRatios = allowedAspectRatios
-        }
+        // if let aspectRatioPresets = arguments?["aspectRatioPresets"] as? [String] {
+        //     var allowedAspectRatios = [CropViewControllerAspectRatioPreset]()
+        //     for preset in aspectRatioPresets {
+        //         let aspectRatio = parseAspectRatio(name: preset)
+        //         allowedAspectRatios.append(aspectRatio)
+        //     }
+        //     cropViewController.allowedAspectRatios = allowedAspectRatios
+        // }
         DispatchQueue.main.async {
             UIApplication.topViewController()?.present(cropViewController, animated: self.pickerType == .cropper, completion: nil)
         }
@@ -502,25 +502,26 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         }
     }
     
-    private func parseAspectRatio(name: String) -> CropViewControllerAspectRatioPreset {
-        if name == "square" {
-            return .square
-        } else if name == "3x2" {
-            return ._3x2
-        } else if name == "4x3" {
-            return ._4x3
-        } else if name == "5x3" {
-            return ._5x3
-        } else if name == "5x4" {
-            return ._5x4
-        } else if name == "7x5" {
-            return ._7x5
-        } else if name == "16x9" {
-            return ._16x9
-        } else {
-            return .original
-        }
-    }
+    // private func parseAspectRatio(name: String) -> CropViewControllerAspectRatioPreset {
+    //     CropViewControllerAspectRatioPreset.
+    //     if name == "square" {
+    //         return .square
+    //     } else if name == "3x2" {
+    //         return ._3x2
+    //     } else if name == "4x3" {
+    //         return ._4x3
+    //     } else if name == "5x3" {
+    //         return ._5x3
+    //     } else if name == "5x4" {
+    //         return ._5x4
+    //     } else if name == "7x5" {
+    //         return ._7x5
+    //     } else if name == "16x9" {
+    //         return ._16x9
+    //     } else {
+    //         return .original
+    //     }
+    // }
 }
 
 extension UIApplication {
