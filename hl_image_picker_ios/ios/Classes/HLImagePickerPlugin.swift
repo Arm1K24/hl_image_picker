@@ -504,21 +504,21 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     
     private func parseAspectRatio(name: String) -> CropViewControllerAspectRatioPreset {
         if name == "square" {
-            return .presetSquare
+            return .square
         } else if name == "3x2" {
-            return .preset3x2
+            return ._3x2
         } else if name == "4x3" {
-            return .preset4x3
+            return ._4x3
         } else if name == "5x3" {
-            return .preset5x3
+            return ._5x3
         } else if name == "5x4" {
-            return .preset5x4
+            return ._5x4
         } else if name == "7x5" {
-            return .preset7x5
+            return ._7x5
         } else if name == "16x9" {
-            return .preset16x9
+            return ._16x9
         } else {
-            return .presetOriginal
+            return .original
         }
     }
 }
