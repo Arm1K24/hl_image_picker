@@ -433,7 +433,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         //     cropViewController.aspectRatioPickerButtonHidden = true
         //     cropViewController.aspectRatioLockDimensionSwapEnabled = true
         //     cropViewController.aspectRatioLockEnabled = true
-        }
+        // }
         if let aspectRatioPresets = arguments?["aspectRatioPresets"] as? [String] {
             var allowedAspectRatios = [CropViewControllerAspectRatioPreset]()
             for preset in aspectRatioPresets {
