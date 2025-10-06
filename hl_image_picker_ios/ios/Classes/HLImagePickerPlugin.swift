@@ -435,7 +435,6 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             )
             
             cropViewController.allowedAspectRatios = [customPreset]
-            cropViewController.defaultAspectRatio = customPreset
             
             cropViewController.resetAspectRatioEnabled = false
             cropViewController.aspectRatioPickerButtonHidden = true
