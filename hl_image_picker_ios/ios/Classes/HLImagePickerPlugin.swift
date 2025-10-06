@@ -425,40 +425,28 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             cropViewController.title = cropTitle
         }
         
-        if let aspectRatioX = arguments?["ratioX"] as? Double,
-           let aspectRatioY = arguments?["ratioY"] as? Double {
-            
-            // Создаём свой пресет с кастомным размером
-            let customPreset = TOCropViewControllerAspectRatioPreset(
-                size: CGSize(width: aspectRatioX, height: aspectRatioY),
-                title: "\(Int(aspectRatioX)):\(Int(aspectRatioY))"
-            )
-            
-            cropViewController.allowedAspectRatios = [customPreset]
-            
+        let aspectRatioX = arguments?["ratioX"] as? Double
+        let aspectRatioY = arguments?["ratioY"] as? Double
+        if aspectRatioX != nil && aspectRatioY != nil {
+            cropViewController.customAspectRatio = CGSize(width: aspectRatioX!, height: aspectRatioY!)
             cropViewController.resetAspectRatioEnabled = false
             cropViewController.aspectRatioPickerButtonHidden = true
             cropViewController.aspectRatioLockDimensionSwapEnabled = true
             cropViewController.aspectRatioLockEnabled = true
         }
-
-        
-        // ✅ Новый API для allowedAspectRatios
         if let aspectRatioPresets = arguments?["aspectRatioPresets"] as? [String] {
-            var allowedAspectRatios = [TOCropViewControllerAspectRatioPreset]()
+            var allowedAspectRatios = [CropViewControllerAspectRatioPreset]()
             for preset in aspectRatioPresets {
-                let ratio = parseAspectRatio(name: preset)
-                allowedAspectRatios.append(ratio)
+                let aspectRatio = parseAspectRatio(name: preset)
+                allowedAspectRatios.append(aspectRatio)
             }
             cropViewController.allowedAspectRatios = allowedAspectRatios
         }
-        
         DispatchQueue.main.async {
             UIApplication.topViewController()?.present(cropViewController, animated: self.pickerType == .cropper, completion: nil)
         }
     }
     
-    // MARK: - Crop delegates
     public func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         let compressQuality = arguments?["cropCompressQuality"] as? Double
         let compressFormat = arguments?["cropCompressFormat"] as? String
@@ -468,29 +456,28 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             targetSize = CGSize(width: CGFloat(cropMaxWidth), height: CGFloat(cropMaxHeight))
         }
         let croppedImage = HLImagePickerUtils.copyImage(image, quality: compressQuality, format: compressFormat, targetSize: targetSize)
-        
         DispatchQueue.main.async {
             if(self.pickerType == .camera) {
                 UIApplication.topViewController()?.dismiss(animated: false, completion: {
                     UIApplication.topViewController()?.dismiss(animated: true, completion: {
-                        if let croppedImage = croppedImage {
-                            self.result?(croppedImage)
+                        if croppedImage != nil {
+                            self.result!(croppedImage)
                         } else {
-                            self.result?(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
+                            self.result!(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
                         }
                     })
                 })
             } else if(self.pickerType == .cropper) {
                 UIApplication.topViewController()?.dismiss(animated: true, completion: {
-                    if let croppedImage = croppedImage {
-                        self.result?(croppedImage)
+                    if croppedImage != nil {
+                        self.result!(croppedImage)
                     } else {
-                        self.result?(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
+                        self.result!(FlutterError(code: "CROP_ERROR", message: "Crop error", details: nil))
                     }
                 })
             } else {
-                if let croppedImage = croppedImage {
-                    self.croppedImages.append(croppedImage)
+                if let image = croppedImage {
+                    self.croppedImages.append(image)
                 }
                 UIApplication.topViewController()?.dismiss(animated: false, completion: {
                     self.processAssetForCropping(assets: self.selectedAssets)
@@ -505,7 +492,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             DispatchQueue.main.async {
                 UIApplication.topViewController()?.dismiss(animated: false, completion: {
                     if self.pickerType == .cropper {
-                        self.result?(FlutterError(code: "CANCELED", message: "User has canceled the cropper", details: nil))
+                        self.result!(FlutterError(code: "CANCELED", message: "User has canceled the cropper", details: nil))
                     }
                     if self.pickerType == .camera {
                         UIApplication.topViewController()?.dismiss(animated: true, completion: nil)
@@ -515,25 +502,23 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         }
     }
     
-    // MARK: - Новый parseAspectRatio
-    private func parseAspectRatio(name: String) -> TOCropViewControllerAspectRatioPreset {
-        switch name {
-        case "square":
-            return TOCropViewControllerAspectRatioPreset(size: CGSize(width: 1, height: 1), title: "Square")
-        case "3x2":
-            return TOCropViewControllerAspectRatioPreset(size: CGSize(width: 3, height: 2), title: "3:2")
-        case "4x3":
-            return TOCropViewControllerAspectRatioPreset(size: CGSize(width: 4, height: 3), title: "4:3")
-        case "5x3":
-            return TOCropViewControllerAspectRatioPreset(size: CGSize(width: 5, height: 3), title: "5:3")
-        case "5x4":
-            return TOCropViewControllerAspectRatioPreset(size: CGSize(width: 5, height: 4), title: "5:4")
-        case "7x5":
-            return TOCropViewControllerAspectRatioPreset(size: CGSize(width: 7, height: 5), title: "7:5")
-        case "16x9":
-            return TOCropViewControllerAspectRatioPreset(size: CGSize(width: 16, height: 9), title: "16:9")
-        default:
-            return TOCropViewControllerAspectRatioPreset(size: .zero, title: "Original")
+    private func parseAspectRatio(name: String) -> CropViewControllerAspectRatioPreset {
+        if name == "square" {
+            return .presetSquare
+        } else if name == "3x2" {
+            return .preset3x2
+        } else if name == "4x3" {
+            return .preset4x3
+        } else if name == "5x3" {
+            return .preset5x3
+        } else if name == "5x4" {
+            return .preset5x4
+        } else if name == "7x5" {
+            return .preset7x5
+        } else if name == "16x9" {
+            return .preset16x9
+        } else {
+            return .presetOriginal
         }
     }
 }
