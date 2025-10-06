@@ -425,16 +425,24 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
             cropViewController.title = cropTitle
         }
         
-        // ✅ Новый API для customAspectRatio
         if let aspectRatioX = arguments?["ratioX"] as? Double,
            let aspectRatioY = arguments?["ratioY"] as? Double {
-            cropViewController.customAspectRatio = CGSize(width: aspectRatioX, height: aspectRatioY)
-            cropViewController.customAspectRatioName = "\(Int(aspectRatioX)):\(Int(aspectRatioY))"
+            
+            // Создаём свой пресет с кастомным размером
+            let customPreset = TOCropViewControllerAspectRatioPreset(
+                size: CGSize(width: aspectRatioX, height: aspectRatioY),
+                title: "\(Int(aspectRatioX)):\(Int(aspectRatioY))"
+            )
+            
+            cropViewController.allowedAspectRatios = [customPreset]
+            cropViewController.defaultAspectRatio = customPreset
+            
             cropViewController.resetAspectRatioEnabled = false
             cropViewController.aspectRatioPickerButtonHidden = true
             cropViewController.aspectRatioLockDimensionSwapEnabled = true
             cropViewController.aspectRatioLockEnabled = true
         }
+
         
         // ✅ Новый API для allowedAspectRatios
         if let aspectRatioPresets = arguments?["aspectRatioPresets"] as? [String] {
