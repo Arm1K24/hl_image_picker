@@ -6,6 +6,7 @@ import 'package:hl_image_picker_platform_interface/hl_image_picker_platform_inte
 export 'package:hl_image_picker_platform_interface/hl_image_picker_platform_interface.dart'
     show
         MediaType,
+        HLThemeMode,
         HLPickerOptions,
         CameraType,
         HLCameraOptions,
@@ -42,6 +43,7 @@ class HLImagePicker {
     bool? cropping,
     HLCropOptions? cropOptions,
     LocalizedImagePicker? localized,
+    HLThemeMode themeMode = HLThemeMode.light,
   }) async {
     return platform.openPicker(
       selectedIds: selectedIds,
@@ -49,6 +51,7 @@ class HLImagePicker {
       pickerOptions: pickerOptions,
       cropOptions: cropOptions,
       localized: localized,
+      themeMode: themeMode,
     );
   }
 
