@@ -7,6 +7,7 @@ import 'package:hl_image_picker_platform_interface/hl_image_picker_platform_inte
 export 'package:hl_image_picker_platform_interface/hl_image_picker_platform_interface.dart'
     show
         MediaType,
+        HLThemeMode,
         HLPickerOptions,
         CameraType,
         HLCameraOptions,
@@ -49,6 +50,7 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
     bool? cropping,
     HLCropOptions? cropOptions,
     LocalizedImagePicker? localized,
+    HLThemeMode themeMode = HLThemeMode.light,
   }) async {
     double? cropCompressQuality = cropOptions?.compressQuality;
     assert(cropCompressQuality == null ||
@@ -112,6 +114,7 @@ class HLImagePickerIOS extends HLImagePickerPlatform {
       'maxHeight': pickerHeight,
       'compressQuality': pickerOptions?.compressQuality,
       'compressFormat': pickerOptions?.compressFormat?.name,
+      'themeMode': themeMode.name,
     });
     List<HLPickerItem> selectedItems = [];
     if (data != null) {
