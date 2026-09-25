@@ -92,7 +92,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
                         DispatchQueue.main.async {
                             let imagePicker = UIImagePickerController()
                             if #available(iOS 13.0, *) {
-                                applyTheme(to: imagePicker)
+                                self.applyTheme(to: imagePicker)
                             }
                             imagePicker.delegate = self
                             imagePicker.sourceType = .camera
@@ -119,7 +119,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         let isVideo = arguments?["cameraType"] as? String == "video"
         if #available(iOS 13.0, *) {
-            applyTheme(to: picker)
+            self.applyTheme(to: picker)
         }
         if isVideo {
             if let videoURL = info[.mediaURL] as? URL {
@@ -438,7 +438,7 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     private func openCropper(image: UIImage) {
         var cropViewController = CropViewController(croppingStyle: .default, image: image)
         if #available(iOS 13.0, *) {
-            applyTheme(to: cropViewController)
+            self.applyTheme(to: cropViewController)
         }
         if let croppingStyle = arguments?["croppingStyle"] as? String, croppingStyle == "circular" {
             cropViewController = CropViewController(croppingStyle: .circular, image: image)
