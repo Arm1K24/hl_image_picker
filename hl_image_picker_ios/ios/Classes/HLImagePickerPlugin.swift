@@ -11,6 +11,23 @@ enum PickerType {
     case cropper
 }
 
+@available(iOS 13.0, *)
+private func applyTheme(to controller: UIViewController) {
+
+    let theme = arguments?["themeMode"] as? String ?? "system"
+
+    switch theme {
+    case "dark":
+        controller.overrideUserInterfaceStyle = .dark
+
+    case "light":
+        controller.overrideUserInterfaceStyle = .light
+
+    default:
+        controller.overrideUserInterfaceStyle = .unspecified
+    }
+}
+
 public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewControllerDelegate, CropViewControllerDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "hl_image_picker", binaryMessenger: registrar.messenger())
@@ -75,6 +92,9 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
                     if granted {
                         DispatchQueue.main.async {
                             let imagePicker = UIImagePickerController()
+                            if #available(iOS 13.0, *) {
+                                applyTheme(to: imagePicker)
+                            }
                             imagePicker.delegate = self
                             imagePicker.sourceType = .camera
                             imagePicker.allowsEditing = false
@@ -99,6 +119,9 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         let isVideo = arguments?["cameraType"] as? String == "video"
+        if #available(iOS 13.0, *) {
+            applyTheme(to: picker)
+        }
         if isVideo {
             if let videoURL = info[.mediaURL] as? URL {
                 let asset = AVAsset(url: videoURL)
@@ -415,6 +438,9 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     // MARK: CropViewController
     private func openCropper(image: UIImage) {
         var cropViewController = CropViewController(croppingStyle: .default, image: image)
+        if #available(iOS 13.0, *) {
+            applyTheme(to: cropViewController)
+        }
         if let croppingStyle = arguments?["croppingStyle"] as? String, croppingStyle == "circular" {
             cropViewController = CropViewController(croppingStyle: .circular, image: image)
         }
