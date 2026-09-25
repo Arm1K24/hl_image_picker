@@ -253,11 +253,20 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
     }
 
     private fun handleUIStyle(): PictureSelectorStyle {
+        val themeMode = flutterCall?.argument<String>("themeMode") ?: "light"
+        val isDark = themeMode == "dark"
+
         val style = PictureSelectorStyle()
         val mainStyle = SelectMainStyle()
         mainStyle.isDarkStatusBarBlack = true
-        mainStyle.mainListBackgroundColor = Color.parseColor("#FFFFFF")
-        mainStyle.previewBackgroundColor = Color.parseColor("#FFFFFF")
+        mainStyle.mainListBackgroundColor =
+        if (isDark) Color.parseColor("#000000")
+        else Color.parseColor("#FFFFFF")
+    
+        mainStyle.previewBackgroundColor =
+        if (isDark) Color.parseColor("#000000")
+        else Color.parseColor("#FFFFFF")
+
         mainStyle.isPreviewDisplaySelectGallery = true
         mainStyle.isPreviewSelectRelativeBottom = true
         mainStyle.isCompleteSelectRelativeTop = true
@@ -278,14 +287,28 @@ class HLImagePickerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Plu
 
         val titleBarStyle = TitleBarStyle()
         titleBarStyle.isHideCancelButton = true
-        titleBarStyle.titleBackgroundColor = Color.parseColor("#FFFFFF")
-        titleBarStyle.titleTextColor = Color.parseColor("#000000")
-        titleBarStyle.titleLeftBackResource = R.drawable.ps_ic_black_back
+        titleBarStyle.titleBackgroundColor =
+            if (isDark) Color.parseColor("#000000")
+            else Color.parseColor("#FFFFFF")
+        
+        titleBarStyle.titleTextColor =
+            if (isDark) Color.parseColor("#FFFFFF")
+            else Color.parseColor("#000000")
+        
+        titleBarStyle.titleLeftBackResource =
+            if (isDark)
+                R.drawable.ps_ic_white_back
+            else
+                R.drawable.ps_ic_black_back
         titleBarStyle.titleDrawableRightResource = R.drawable.hl_arrow_down
         titleBarStyle.isDisplayTitleBarLine = true
 
         val bottomBarStyle = BottomNavBarStyle()
-        bottomBarStyle.bottomNarBarBackgroundColor = Color.parseColor("#FFFFFF")
+        bottomBarStyle.bottomNarBarBackgroundColor =
+    if (isDark)
+        Color.parseColor("#000000")
+    else
+        Color.parseColor("#FFFFFF")
         bottomBarStyle.isCompleteCountTips = false
         bottomBarStyle.bottomPreviewSelectTextColor = Color.parseColor("#007AFF")
 
