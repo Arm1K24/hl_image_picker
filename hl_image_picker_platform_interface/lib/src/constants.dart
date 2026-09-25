@@ -2,6 +2,12 @@ enum CroppingStyle { normal, circular }
 
 enum MediaType { image, video, all }
 
+enum HLThemeMode {
+  system,
+  light,
+  dark,
+}
+
 enum CameraType { image, video }
 
 enum CompressFormat { png, jpg }
