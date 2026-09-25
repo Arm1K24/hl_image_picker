@@ -118,9 +118,6 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         let isVideo = arguments?["cameraType"] as? String == "video"
-        if #available(iOS 13.0, *) {
-            self.applyTheme(to: picker)
-        }
         if isVideo {
             if let videoURL = info[.mediaURL] as? URL {
                 let asset = AVAsset(url: videoURL)
@@ -229,6 +226,9 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
         picker.configure = configure
         picker.selectedAssets = self.selectedAssets
         DispatchQueue.main.async {
+            if #available(iOS 13.0, *) {
+                self.applyTheme(to: picker)
+            }
             UIApplication.topViewController()?.present(picker, animated: true, completion: nil)
         }
     }
@@ -437,11 +437,11 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     // MARK: CropViewController
     private func openCropper(image: UIImage) {
         var cropViewController = CropViewController(croppingStyle: .default, image: image)
-        if #available(iOS 13.0, *) {
-            self.applyTheme(to: cropViewController)
-        }
         if let croppingStyle = arguments?["croppingStyle"] as? String, croppingStyle == "circular" {
             cropViewController = CropViewController(croppingStyle: .circular, image: image)
+        }
+        if #available(iOS 13.0, *) {
+            self.applyTheme(to: cropViewController)
         }
         cropViewController.delegate = self
         cropViewController.doneButtonTitle = uiStyle?["cropDoneText"] as? String ?? "Done"
