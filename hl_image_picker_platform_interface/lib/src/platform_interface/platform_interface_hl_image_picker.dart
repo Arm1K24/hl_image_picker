@@ -2,10 +2,12 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import '../camera_options.dart';
 import '../crop_options.dart';
+import '../constants.dart';
 import '../method_channel/method_channel_hl_image_picker.dart';
 import '../picker_item.dart';
 import '../picker_options.dart';
 import '../picker_localized.dart';
+
 
 abstract class HLImagePickerPlatform extends PlatformInterface {
   /// Constructs a HLImagePickerPlatform.
@@ -34,6 +36,7 @@ abstract class HLImagePickerPlatform extends PlatformInterface {
     bool? cropping,
     HLCropOptions? cropOptions,
     LocalizedImagePicker? localized,
+    HLThemeMode themeMode = HLThemeMode.light,
   }) {
     throw UnimplementedError('openPicker() has not been implemented.');
   }
