@@ -221,17 +221,36 @@ public class HLImagePickerPlugin: NSObject, FlutterPlugin, TLPhotosPickerViewCon
     }
     
     private func openPicker() {
-        let picker = TLPhotosPickerViewController()
-        picker.delegate = self
-        picker.configure = configure
-        picker.selectedAssets = self.selectedAssets
-        DispatchQueue.main.async {
-            if #available(iOS 13.0, *) {
-                self.applyTheme(to: picker)
-            }
-            UIApplication.topViewController()?.present(picker, animated: true, completion: nil)
+    let picker = TLPhotosPickerViewController()
+    picker.delegate = self
+    picker.configure = configure
+    picker.selectedAssets = self.selectedAssets
+
+    DispatchQueue.main.async {
+        guard let presenter = UIApplication.topViewController() else {
+            self.result?(FlutterError(
+                code: "PRESENTATION_ERROR",
+                message: "Unable to find top view controller",
+                details: nil
+            ))
+            return
         }
+
+        if #available(iOS 13.0, *) {
+            // Очень важно для TLPhotoPicker:
+            // сначала загружаем XIB и IBOutlet'ы,
+            // только потом меняем interface style.
+            picker.loadViewIfNeeded()
+            self.applyTheme(to: picker)
+        }
+
+        presenter.present(
+            picker,
+            animated: true,
+            completion: nil
+        )
     }
+}
     
     public func shouldDismissPhotoPicker(withTLPHAssets: [TLPHAsset]) -> Bool {
         return false
